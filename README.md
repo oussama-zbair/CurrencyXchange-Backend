@@ -1,6 +1,6 @@
 # RealTime-CurrencyConverter
 
-![Currency Converter Banner](https://via.placeholder.com/1000x300?text=RealTime+Currency+Converter)
+![Currency Converter Banner](https://via.placeholder.com/1000x300?text=RealTime+Currency+Converte)
 
 ## 🌍 Overview
 RealTime-CurrencyConverter is a professional **real-time currency conversion** web application built with **Spring Boot (Java Full Stack)** and **React**. It automatically detects the user's location and suggests the **local currency**, fetching **live exchange rates** and displaying country flags.
@@ -35,8 +35,9 @@ RealTime-CurrencyConverter is a professional **real-time currency conversion** w
 
 ## 📥 Installation & Setup
 ### **🔧 Backend Setup (Spring Boot)**
+
 ```bash
-git clone https://github.com/yourusername/RealTime-CurrencyConverter.git
+git clone https://github.com/yourusername/CurrencyXchange.git
 cd backend
 mvn clean install
 mvn spring-boot:run
