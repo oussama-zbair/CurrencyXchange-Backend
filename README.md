@@ -1,4 +1,4 @@
-# RealTime-CurrencyConverter
+# CurrencyXchange
 
 ![Currency Converter Banner](https://via.placeholder.com/1000x300?text=RealTime+Currency+Converte)
 
