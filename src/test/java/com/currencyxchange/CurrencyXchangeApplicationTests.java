@@ -1,4 +1,4 @@
-package com.currencyxchange.currency_converter;
+package com.currencyxchange;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

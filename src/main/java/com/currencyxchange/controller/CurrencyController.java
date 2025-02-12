@@ -1,10 +1,11 @@
 package com.currencyxchange.controller;
 
+import com.currencyxchange.dto.CurrencyDTO;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import service.CurrencyService;
+import com.currencyxchange.service.CurrencyService;
 
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/currency")
@@ -17,7 +18,7 @@ public class CurrencyController {
     }
 
     @GetMapping("/rates")
-    public Mono<Map> getExchangeRates(@RequestParam String baseCurrency) {
+    public Mono<CurrencyDTO> getExchangeRates(@RequestParam String baseCurrency) {
         return currencyService.getExchangeRates(baseCurrency);
     }
 }

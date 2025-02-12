@@ -1,4 +1,4 @@
-package controller;
+package com.currencyxchange.controller;
 
 
 import org.springframework.web.bind.annotation.GetMapping;

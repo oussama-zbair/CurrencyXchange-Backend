@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CurrencyXchange</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-$END$
+<div class="container">
+    <h1>🌍 Welcome to CurrencyXchange</h1>
+    <p>We detected your location as: <strong th:text="${country}">Country</strong></p>
+    <p>Your suggested currency: <strong th:text="${currency}">Currency</strong></p>
+    <button onclick="window.location.href='/convert'">Convert Currency</button>
+</div>
 </body>
 </html>
