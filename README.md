@@ -1,6 +1,5 @@
 # CurrencyXchange
 
-![Currency Converter Banner](https://via.placeholder.com/1000x300?text=RealTime+Currency+Converte)
 
 ## 🌍 Overview
 RealTime-CurrencyConverter is a professional **real-time currency conversion** web application built with **Spring Boot (Java Full Stack)** and **React**. It automatically detects the user's location and suggests the **local currency**, fetching **live exchange rates** and displaying country flags.
@@ -67,6 +66,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 
 ## 👨‍💻 Author
-**Oussama Zbair** - [GitHub Profile](https://github.com/yourusername)
+**Oussama Zbair** - [GitHub Profile](https://github.com/oussama-zbair)
 
 🌟 If you like this project, give it a ⭐ on GitHub!
