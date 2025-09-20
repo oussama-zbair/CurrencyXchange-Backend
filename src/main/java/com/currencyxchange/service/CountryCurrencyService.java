@@ -24,35 +24,33 @@ public class CountryCurrencyService {
     public Flux<CountryCurrencyDTO> getAllCountriesWithCurrency() {
         return webClient.get()
                 .uri("/all?fields=name,cca2,currencies")
+                .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToFlux(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .bodyToFlux(Map.class)
                 .flatMap(map -> {
                     try {
                         Map<String, Object> nameMap = (Map<String, Object>) map.get("name");
-                        String country = nameMap != null ? nameMap.get("common").toString() : null;
+                        String country = nameMap.get("common").toString();
 
-                        String countryCode = map.get("cca2") != null ? map.get("cca2").toString() : null;
+                        String countryCode = map.get("cca2").toString();
+                        Map<String, Map<String, String>> currencies = (Map<String, Map<String, String>>) map.get("currencies");
 
-                        Map<String, Map<String, Object>> currencies =
-                                (Map<String, Map<String, Object>>) map.get("currencies");
-
-                        if (country == null || countryCode == null || currencies == null || currencies.isEmpty()) {
-                            return Flux.empty(); // skip invalid
-                        }
+                        if (currencies == null || currencies.isEmpty()) return Flux.empty();
 
                         String currencyCode = currencies.keySet().iterator().next();
-                        Map<String, Object> currencyDetails = currencies.get(currencyCode);
-                        if (currencyDetails == null || !currencyDetails.containsKey("name")) {
-                            return Flux.empty(); // skip
-                        }
+                        String currencyName = currencies.get(currencyCode).get("name");
 
-                        String currencyName = currencyDetails.get("name").toString();
+                        CountryCurrencyDTO dto = new CountryCurrencyDTO(
+                                country,
+                                currencyCode,
+                                currencyName,
+                                countryCode
+                        );
 
-                        return Flux.just(new CountryCurrencyDTO(
-                                country, currencyCode, currencyName, countryCode
-                        ));
+                        return Flux.just(dto);
+
                     } catch (Exception e) {
-                        System.err.println("⚠️ Mapping error: " + e.getMessage());
+                        System.err.println("Mapping error: " + e.getMessage());
                         return Flux.empty();
                     }
                 });
