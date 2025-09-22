@@ -13,7 +13,12 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "https://currencyxchange.web.app", // Firebase (if used)
+                                "https://currencyxchange-frontend.azurestaticapps.net" // Azure frontend (optional)
+                        )
+
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);
