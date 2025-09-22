@@ -2,6 +2,7 @@ package com.currencyxchange.service;
 
 import com.currencyxchange.dto.CountryCurrencyDTO;
 import com.currencyxchange.dto.GeoLocationDTO;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -51,26 +52,22 @@ public class GeoLocationService {
                 .build();
 
         return webClient.get()
-                .uri("/all")
+                .uri("/all?fields=name,cca2,currencies")
                 .retrieve()
-                .bodyToFlux(org.springframework.boot.configurationprocessor.json.JSONObject.class)
+                .bodyToFlux(JsonNode.class)
                 .map(json -> {
-                    String countryName = json.optJSONObject("name")
-                            .optString("common", "Unknown");
+                    String countryName = json.path("name").path("common").asText("Unknown");
+                    String countryCode = json.path("cca2").asText("N/A");
 
                     String currencyCode = "N/A";
                     String currencyName = "N/A";
-                    if (json.has("currencies")) {
-                        var currencies = json.optJSONObject("currencies");
-                        if (currencies != null && currencies.keys().hasNext()) {
-                            String firstCode = currencies.keys().next().toString();
-                            currencyCode = firstCode;
-                            currencyName = currencies.optJSONObject(firstCode)
-                                    .optString("name", "Unknown");
-                        }
-                    }
 
-                    String countryCode = json.optString("cca2", "N/A");
+                    JsonNode currencies = json.path("currencies");
+                    if (currencies.fieldNames().hasNext()) {
+                        String firstCode = currencies.fieldNames().next();
+                        currencyCode = firstCode;
+                        currencyName = currencies.path(firstCode).path("name").asText("Unknown");
+                    }
 
                     return new CountryCurrencyDTO(countryName, currencyCode, currencyName, countryCode);
                 })
