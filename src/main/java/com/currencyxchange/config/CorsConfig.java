@@ -15,10 +15,11 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:3000",
-                                "https://currencyxchange.web.app", // Firebase (if used)
-                                "https://currencyxchange-frontend.azurestaticapps.net" // Azure frontend (optional)
+                                "https://currencyxchange.web.app",
+                                "https://currencyxchange-frontend.azurestaticapps.net",
+                                "https://green-sea-0ad5cce03.1.azurestaticapps.net",
+                                "https://livecurrencyxchange.online"
                         )
-
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);
@@ -26,3 +27,4 @@ public class CorsConfig {
         };
     }
 }
+
