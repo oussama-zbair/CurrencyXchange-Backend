@@ -22,10 +22,12 @@ public class GeoLocationService {
     }
 
     public Mono<GeoLocationDTO> getUserLocation(String ip) {
-        // Fallback IP for local testing (loopback IPv6)
-        String validIp = (ip == null || ip.equals("::1") || ip.equals("0:0:0:0:0:0:0:1")) ? "105.157.161.245" : ip;
+        String geoApiUrl = "https://api.ipgeolocation.io/ipgeo?apiKey=" + API_KEY;
 
-        String geoApiUrl = "https://api.ipgeolocation.io/ipgeo?apiKey=" + API_KEY + "&ip=" + validIp;
+        // Only add IP param if valid IP is provided (from frontend)
+        if (ip != null && !ip.equals("::1") && !ip.equals("0:0:0:0:0:0:0:1") && !ip.isBlank()) {
+            geoApiUrl += "&ip=" + ip;
+        }
 
         return webClientBuilder.build()
                 .get()
@@ -51,6 +53,7 @@ public class GeoLocationService {
                     });
                 });
     }
+
 
     public Mono<List<CountryCurrencyDTO>> getAllCountries() {
         WebClient webClient = WebClient.builder()
