@@ -2,12 +2,17 @@ package com.currencyxchange.service;
 
 import com.currencyxchange.dto.CountryCurrencyDTO;
 import com.currencyxchange.dto.GeoLocationDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Service
@@ -54,33 +59,14 @@ public class GeoLocationService {
                 });
     }
 
-
     public Mono<List<CountryCurrencyDTO>> getAllCountries() {
-        WebClient webClient = WebClient.builder()
-                .baseUrl("https://restcountries.com/v3.1")
-                .defaultHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (CurrencyXchange)")
-                .build();
-
-        return webClient.get()
-                .uri("/all?fields=name,cca2,currencies")
-                .retrieve()
-                .bodyToFlux(JsonNode.class)
-                .map(json -> {
-                    String countryName = json.path("name").path("common").asText("Unknown");
-                    String countryCode = json.path("cca2").asText("N/A");
-
-                    String currencyCode = "N/A";
-                    String currencyName = "N/A";
-
-                    JsonNode currencies = json.path("currencies");
-                    if (currencies.fieldNames().hasNext()) {
-                        String firstCode = currencies.fieldNames().next();
-                        currencyCode = firstCode;
-                        currencyName = currencies.path(firstCode).path("name").asText("Unknown");
-                    }
-
-                    return new CountryCurrencyDTO(countryName, currencyCode, currencyName, countryCode);
-                })
-                .collectList();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            InputStream inputStream = new ClassPathResource("countries.json").getInputStream();
+            List<CountryCurrencyDTO> countries = mapper.readValue(inputStream, new TypeReference<>() {});
+            return Mono.just(countries);
+        } catch (IOException e) {
+            return Mono.error(new RuntimeException("Failed to load country data", e));
+        }
     }
 }
