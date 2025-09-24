@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class GeoLocationService {
@@ -20,25 +21,33 @@ public class GeoLocationService {
     }
 
     /**
-     * Fetches the user's geolocation info using IP API.
+     * Fetches the user's geolocation info using IP API and assigns detected currency using /countries.
      */
-    public Mono<GeoLocationDTO> getUserLocation() {
+    public Mono<GeoLocationDTO> getUserLocation(String ip) {
+        String geoApiUrl = "http://ip-api.com/json/" + ip;
         return webClientBuilder.build()
                 .get()
-                .uri("http://ip-api.com/json/")
+                .uri(geoApiUrl)
                 .retrieve()
                 .bodyToMono(GeoLocationDTO.class)
-                .map(location -> {
-                    String currency = switch (location.getCountryCode()) {
-                        case "US" -> "USD";
-                        case "MA" -> "MAD";
-                        case "FR" -> "EUR";
-                        case "GB" -> "GBP";
-                        case "IN" -> "INR";
-                        default -> "USD";
-                    };
-                    location.setCurrency(currency);
-                    return location;
+                .flatMap(location -> {
+                    String countryCode = location.getCountryCode();
+                    if (countryCode == null) {
+                        location.setCurrency("USD");
+                        return Mono.just(location);
+                    }
+
+                    // Fetch country-currency mapping dynamically
+                    return getAllCountries().map(countries -> {
+                        String matchedCurrency = countries.stream()
+                                .filter(c -> c.getCountryCode().equalsIgnoreCase(countryCode))
+                                .map(CountryCurrencyDTO::getCurrencyCode)
+                                .findFirst()
+                                .orElse("USD");
+
+                        location.setCurrency(matchedCurrency);
+                        return location;
+                    });
                 });
     }
 
