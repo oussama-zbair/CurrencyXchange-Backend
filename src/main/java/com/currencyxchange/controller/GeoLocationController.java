@@ -20,6 +20,9 @@ public class GeoLocationController {
 
     @GetMapping("/location")
     public Mono<GeoLocationDTO> getUserLocation(HttpServletRequest request) {
-        return geoLocationService.getUserLocation();
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        String clientIp = (forwardedFor != null) ? forwardedFor.split(",")[0] : request.getRemoteAddr();
+        return geoLocationService.getUserLocation(clientIp);
     }
+
 }
