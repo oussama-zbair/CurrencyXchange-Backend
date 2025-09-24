@@ -9,22 +9,21 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class GeoLocationService {
 
     private final WebClient.Builder webClientBuilder;
 
+    private static final String API_KEY = "e37414b2eccb442a94fc315a5cfa7559";
+
     public GeoLocationService(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 
-    /**
-     * Fetches the user's geolocation info using IP API and assigns detected currency using /countries.
-     */
     public Mono<GeoLocationDTO> getUserLocation(String ip) {
-        String geoApiUrl = "http://ip-api.com/json/" + ip;
+        String geoApiUrl = "https://api.ipgeolocation.io/ipgeo?apiKey=" + API_KEY + "&ip=" + ip;
+
         return webClientBuilder.build()
                 .get()
                 .uri(geoApiUrl)
@@ -37,7 +36,6 @@ public class GeoLocationService {
                         return Mono.just(location);
                     }
 
-                    // Fetch country-currency mapping dynamically
                     return getAllCountries().map(countries -> {
                         String matchedCurrency = countries.stream()
                                 .filter(c -> c.getCountryCode().equalsIgnoreCase(countryCode))
@@ -51,9 +49,6 @@ public class GeoLocationService {
                 });
     }
 
-    /**
-     * Fetches all countries with currency and flag info using RestCountries API.
-     */
     public Mono<List<CountryCurrencyDTO>> getAllCountries() {
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://restcountries.com/v3.1")
