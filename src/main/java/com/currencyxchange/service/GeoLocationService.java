@@ -22,7 +22,10 @@ public class GeoLocationService {
     }
 
     public Mono<GeoLocationDTO> getUserLocation(String ip) {
-        String geoApiUrl = "https://api.ipgeolocation.io/ipgeo?apiKey=" + API_KEY + "&ip=" + ip;
+        // Fallback IP for local testing (loopback IPv6)
+        String validIp = (ip == null || ip.equals("::1") || ip.equals("0:0:0:0:0:0:0:1")) ? "105.157.161.245" : ip;
+
+        String geoApiUrl = "https://api.ipgeolocation.io/ipgeo?apiKey=" + API_KEY + "&ip=" + validIp;
 
         return webClientBuilder.build()
                 .get()
