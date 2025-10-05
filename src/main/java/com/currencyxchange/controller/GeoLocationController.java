@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/location")
 public class GeoLocationController {
 
     private final GeoLocationService geoLocationService;
@@ -18,13 +18,12 @@ public class GeoLocationController {
         this.geoLocationService = geoLocationService;
     }
 
-    @GetMapping("/location")
+    @GetMapping
     public Mono<GeoLocationDTO> getUserLocation(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isBlank() || ip.equals("0:0:0:0:0:0:0:1") || ip.equals("127.0.0.1")) {
-            ip = "8.8.8.8"; // fallback for local testing
+        if (ip == null || ip.isBlank() || ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
+            ip = "8.8.8.8"; // fallback for localhost only
         }
         return geoLocationService.getUserLocation(ip);
     }
-
 }
