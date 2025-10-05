@@ -4,7 +4,6 @@ import com.currencyxchange.dto.GeoLocationDTO;
 import com.currencyxchange.service.GeoLocationService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -19,8 +18,13 @@ public class GeoLocationController {
         this.geoLocationService = geoLocationService;
     }
 
-    @GetMapping("/location/{clientIp}")
-    public Mono<GeoLocationDTO> getUserLocation(@PathVariable String clientIp) {
-        return geoLocationService.getUserLocation(clientIp);
+    @GetMapping("/location")
+    public Mono<GeoLocationDTO> getUserLocation(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isBlank() || ip.equals("0:0:0:0:0:0:0:1") || ip.equals("127.0.0.1")) {
+            ip = "8.8.8.8"; // fallback for local testing
+        }
+        return geoLocationService.getUserLocation(ip);
     }
+
 }
