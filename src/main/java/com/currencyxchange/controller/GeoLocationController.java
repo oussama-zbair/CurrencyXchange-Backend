@@ -20,10 +20,14 @@ public class GeoLocationController {
 
     @GetMapping
     public Mono<GeoLocationDTO> getUserLocation(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isBlank() || ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
-            ip = "8.8.8.8"; // fallback for localhost only
+        String ip = null;
+
+        // Extract real client IP from Azure-provided header
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isBlank()) {
+            ip = forwardedFor.split(",")[0].trim(); // take first IP in chain
         }
+
         return geoLocationService.getUserLocation(ip);
     }
 }
