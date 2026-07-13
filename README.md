@@ -18,11 +18,6 @@ RealTime-CurrencyConverter is a professional **real-time currency conversion** w
 
 ---
 
-## 📸 Screenshots
-🚀 Coming soon...
-
----
-
 ## ⚙️ Tech Stack
 - **Backend**: Spring Boot (REST API, Thymeleaf, Spring Security)
 - **Frontend**: React, Bootstrap, Axios
